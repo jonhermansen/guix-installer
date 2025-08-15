@@ -95,7 +95,7 @@
 
     ;; Add some extra packages useful for the installation process
     (packages
-     (append (list git curl stow vim)
+     (append (list curl vim)
              (operating-system-packages installation-os)))))
 
 installation-os-nonfree
