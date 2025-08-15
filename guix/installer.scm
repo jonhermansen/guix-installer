@@ -27,7 +27,6 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages mg)
   #:use-module (gnu packages mtools)
   #:use-module (gnu packages package-management)
   #:use-module (gnu services)
