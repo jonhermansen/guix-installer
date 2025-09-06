@@ -1,8 +1,9 @@
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2019 Alex Griffin <a@ajgrf.com>
 ;;; Copyright © 2019 Pierre Neidhardt <mail@ambrevar.xyz>
 ;;; Copyright © 2019,2024 David Wilson <david@daviwil.com>
 ;;; Copyright © 2022 Jonathan Brielmaier <jonathan.brielmaier@web.de>
-;;; Copyright © 2024 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2024, 2025 Hilton Chain <hako@ultrarare.space>
 ;;;
 ;;; This program is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -21,20 +22,15 @@
 ;; $ guix system image -t iso9660 installer.scm
 
 (define-module (nongnu system install)
-  #:use-module (guix)
-  #:use-module (guix channels)
+  #:use-module (nonguix transformations)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages emacs)
-  #:use-module (gnu packages linux)
-  #:use-module (gnu packages mtools)
   #:use-module (gnu packages package-management)
-  #:use-module (gnu services)
-  #:use-module (gnu services base)
   #:use-module (gnu system)
   #:use-module (gnu system install)
-  #:use-module (nongnu packages linux)
+  #:use-module (gnu system linux-initrd)
   #:export (installation-os-nonfree))
 
 ;; https://substitutes.nonguix.org/signing-key.pub
@@ -58,18 +54,13 @@
          %default-channels))
 
 (define installation-os-nonfree
+  ((compose (nonguix-transformation-guix #:guix-source? #t)
+            ;; FIXME: ‘microcode-initrd’ results in unbootable live system.
+            (nonguix-transformation-linux #:initrd base-initrd))
   (operating-system
     (inherit installation-os)
     (kernel linux)
-    (firmware (list
-               amdgpu-firmware
-               ;; atheros-firmware
-               ;; broadcom-sta
-               ;; i915-firmware
-               ;; iwlwifi-firmware
-               ;; mediatek-firmware
-               ;; realtek-firmware
-	       ))
+    (firmware (list linux-firmware))
 
     ;; Add the 'net.ifnames' argument to prevent network interfaces
     ;; from having really long names.  This can cause an issue with
